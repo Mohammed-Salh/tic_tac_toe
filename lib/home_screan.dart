@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:tic_tac_toe/game_button.dart';
 import 'package:tic_tac_toe/main.dart';
 import 'package:tic_tac_toe/winner_dialog.dart';
@@ -13,8 +14,8 @@ class HomeScrean extends StatefulWidget {
 class _HomeScreanState extends State<HomeScrean> {
   //
   late List<GameButton> buttensList;
-  List player_1 = [];
-  List player_2 = [];
+  late List player1;
+  late List player2;
   var activePlayer = 1;
 
   @override
@@ -25,6 +26,9 @@ class _HomeScreanState extends State<HomeScrean> {
   }
 
   List<GameButton> doInit() {
+    player1 = [];
+    player2 = [];
+    activePlayer = 1;
     var gameButtons = <GameButton>[
       GameButton(id: 1),
       GameButton(id: 2),
@@ -37,6 +41,13 @@ class _HomeScreanState extends State<HomeScrean> {
       GameButton(id: 9),
     ];
     return gameButtons;
+  }
+
+  restGame() async {
+    if (Navigator.canPop(context)) Navigator.pop(context);
+    setState(() {
+      buttensList = doInit();
+    });
   }
 
   @override
@@ -97,12 +108,12 @@ class _HomeScreanState extends State<HomeScrean> {
         GB.text = "X";
         GB.bg = Colors.red;
         activePlayer = 2;
-        player_1.add(GB.id);
+        player1.add(GB.id);
       } else {
         GB.text = "0";
         GB.bg = Colors.black;
         activePlayer = 1;
-        player_2.add(GB.id);
+        player2.add(GB.id);
       }
       GB.enabled = false;
       checkWinner();
@@ -110,16 +121,71 @@ class _HomeScreanState extends State<HomeScrean> {
   }
 
   void checkWinner() {
-    var Winner = -1; // no winners yet
-    if (player_1.contains(1) && player_1.contains(2) && player_1.contains(3)) {
-      Winner = 1;
+    var winner = -1; // no winners yet
+    if (player1.contains(1) && player1.contains(2) && player1.contains(3)) {
+      winner = 1;
     }
-    if (player_2.contains(1) && player_2.contains(2) && player_2.contains(3)) {
-      Winner = 2;
+    if (player2.contains(1) && player2.contains(2) && player2.contains(3)) {
+      winner = 2;
     }
 
-    if (Winner != -1) {
-      if (Winner == 1) {
+    // row 2
+    if (player1.contains(4) && player1.contains(5) && player1.contains(6)) {
+      winner = 1;
+    }
+    if (player2.contains(4) && player2.contains(5) && player2.contains(6)) {
+      winner = 2;
+    }
+
+    // row 3
+    if (player1.contains(7) && player1.contains(8) && player1.contains(9)) {
+      winner = 1;
+    }
+    if (player2.contains(7) && player2.contains(8) && player2.contains(9)) {
+      winner = 2;
+    }
+
+    // col 1
+    if (player1.contains(1) && player1.contains(4) && player1.contains(7)) {
+      winner = 1;
+    }
+    if (player2.contains(1) && player2.contains(4) && player2.contains(7)) {
+      winner = 2;
+    }
+
+    // col 2
+    if (player1.contains(2) && player1.contains(5) && player1.contains(8)) {
+      winner = 1;
+    }
+    if (player2.contains(2) && player2.contains(5) && player2.contains(8)) {
+      winner = 2;
+    }
+
+    // col 3
+    if (player1.contains(3) && player1.contains(6) && player1.contains(9)) {
+      winner = 1;
+    }
+    if (player2.contains(3) && player2.contains(6) && player2.contains(9)) {
+      winner = 2;
+    }
+
+    //diagonal
+    if (player1.contains(1) && player1.contains(5) && player1.contains(9)) {
+      winner = 1;
+    }
+    if (player2.contains(1) && player2.contains(5) && player2.contains(9)) {
+      winner = 2;
+    }
+
+    if (player1.contains(3) && player1.contains(5) && player1.contains(7)) {
+      winner = 1;
+    }
+    if (player2.contains(3) && player2.contains(5) && player2.contains(7)) {
+      winner = 2;
+    }
+
+    if (winner != -1) {
+      if (winner == 1) {
         showDialog(
           context: context,
           builder: (_) => WinnerDialog(
@@ -141,10 +207,6 @@ class _HomeScreanState extends State<HomeScrean> {
     }
   }
 
-  restGame() {
-    if (Navigator.canPop(context)) Navigator.pop(context);
-    setState(() {
-      buttensList = doInit();
-    });
-  }
+  // add your code here.
+
 }
